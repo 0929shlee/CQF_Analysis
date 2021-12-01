@@ -75,19 +75,25 @@ def get_cqi_connection_probability_arr(connection_matrix_file_name):
 
 
 def get_graph_of_cqi_connection_probability(fig_name, max_gnb_connection):
-    bf_arr = get_cqi_connection_probability_arr('connection_matrix_brute_force_' + str(max_gnb_connection) + '.txt')
+    na_arr = get_cqi_connection_probability_arr('connection_matrix_naive_approach_' + str(max_gnb_connection) + '.txt')
+    df_na_arr = pd.DataFrame(na_arr, index=[x for x in range(16)], columns=["CQI"])
+
     cs_arr = get_cqi_connection_probability_arr('connection_matrix_cqi_sorting_' + str(max_gnb_connection) + '.txt')
-    es_arr = get_cqi_connection_probability_arr('connection_matrix_expectation_sorting_' + str(max_gnb_connection) + '.txt')
-    df_bf_arr = pd.DataFrame(bf_arr, index=[x for x in range(16)], columns=["CQI"])
     df_cs_arr = pd.DataFrame(cs_arr, index=[x for x in range(16)], columns=["CQI"])
+
+    es_arr = get_cqi_connection_probability_arr('connection_matrix_expectation_sorting_' + str(max_gnb_connection) + '.txt')
     df_es_arr = pd.DataFrame(es_arr, index=[x for x in range(16)], columns=["CQI"])
+
+    bf_arr = get_cqi_connection_probability_arr('connection_matrix_brute_force_' + str(max_gnb_connection) + '.txt')
+    df_bf_arr = pd.DataFrame(bf_arr, index=[x for x in range(16)], columns=["CQI"])
 
     plt.xlim([-1, 16])
     plt.ylim([0, 1])
     plt.xticks([x for x in range(16)], rotation=45)
-    plt.plot(df_bf_arr.index, df_bf_arr.values, label='brute force')
+    plt.plot(df_na_arr.index, df_na_arr.values, label='naive approach')
     plt.plot(df_cs_arr.index, df_cs_arr.values, label='cqi sorting')
     plt.plot(df_es_arr.index, df_es_arr.values, label='expectation sorting')
+    plt.plot(df_bf_arr.index, df_bf_arr.values, label='brute force')
     plt.legend()
     plt.title('CQI Connection Probabilities')
     plt.xlabel('CQI')
@@ -96,51 +102,97 @@ def get_graph_of_cqi_connection_probability(fig_name, max_gnb_connection):
     plt.show()
 
 
-def get_comp_quality_graph_cqi_quality():
-    cs_arr_5_10_100 = [22.107, 23.043, 23.302, 23.354, 23.354, 23.354, 23.354, 23.354, 23.354]  # cqi sorting 5x10x100
+def get_comp_quality_graph_cqi_quality_5_10_100():
+    na_arr_5_10_100 = [159.58141141306646, 174.84288677468876, 176.75415796317677, 177.15541114488758,
+                       177.15541114488758, 177.15541114488758, 177.15541114488758, 177.15541114488758,
+                       177.15541114488758]  # naive approach 5x10x100
+    df_na_5_10_100 = pd.DataFrame(na_arr_5_10_100,
+                                  index=[x + 2 for x in range(9)],
+                                  columns=['CoMP Quality'])
+
+    cs_arr_5_10_100 = [173.53484442078036, 176.5478515014812, 177.3893853524666, 177.5229076524483, 177.5229076524483,
+                       177.5229076524483, 177.5229076524483, 177.5229076524483, 177.5229076524483]  # cqi sorting 5x10x100
     df_cs_5_10_100 = pd.DataFrame(cs_arr_5_10_100,
                                   index=[x + 2 for x in range(9)],
                                   columns=['CoMP Quality'])
-    cs_arr_5_100_100 = [23.4602, 23.832, 23.835, 23.835, 23.835, 23.835, 23.835, 23.835, 23.835]  # cqi sorting 5x100x100
-    df_cs_5_100_100 = pd.DataFrame(cs_arr_5_100_100,
-                                  index=[(x + 2) * 10 for x in range(9)],
+
+    es_arr_5_10_100 = [173.3576917232533, 176.35595005541614, 177.03291931986521, 177.15541114488758,
+                       177.15541114488758, 177.15541114488758, 177.15541114488758, 177.15541114488758,
+                       177.15541114488758]  # expectation sorting 5x10x100
+    df_es_5_10_100 = pd.DataFrame(es_arr_5_10_100,
+                                  index=[x + 2 for x in range(9)],
                                   columns=['CoMP Quality'])
+
     bf_arr_5_10_100 = [22.541, 23.225, 23.324, 23.354, 23.354, 23.354, 23.354, 23.354, 23.354]  # brute force 5x10x100
     df_bf_5_10_100 = pd.DataFrame(bf_arr_5_10_100,
                                   index=[x + 2 for x in range(9)],
                                   columns=['CoMP Quality'])
-    es_arr_5_10_100 = [22.226, 23.136, 23.31, 23.354, 23.354, 23.354, 23.354, 23.354, 23.354]  # expectation sorting 5x10x100
-    df_es_5_10_100 = pd.DataFrame(es_arr_5_10_100,
-                                  index=[x + 2 for x in range(9)],
-                                  columns=['CoMP Quality'])
-    es_arr_5_100_100 = [23.5845, 23.8334, 23.835, 23.835, 23.835, 23.835, 23.835, 23.835, 23.835]  # expectation sorting 5x100x100
-    df_es_5_100_100 = pd.DataFrame(es_arr_5_100_100,
-                                  index=[(x + 2) * 10 for x in range(9)],
-                                  columns=['CoMP Quality'])
 
     # plt.xlim([1, 11])
-    plt.ylim([21, 25])
-    # plt.xticks([x + 2 for x in range(9)])
-    plt.xticks([(x + 2) * 10 for x in range(9)])
-    # plt.plot(df_bf_5_10_100.index, df_bf_5_10_100.values, label='brute force')
-    # plt.plot(df_cs_5_10_100.index, df_cs_5_10_100.values, label='cqi sorting')
-    plt.plot(df_cs_5_100_100.index, df_cs_5_100_100.values, label='cqi sorting')
-    # plt.plot(df_es_5_10_100.index, df_es_5_10_100.values, label='expectration sorting')
-    plt.plot(df_es_5_100_100.index, df_es_5_100_100.values, label='expectration sorting')
+
+    plt.ylim([159, 178])
+    plt.xticks([x + 2 for x in range(9)])
+    plt.plot(df_na_5_10_100.index, df_na_5_10_100.values, label='naive approach')
+    plt.plot(df_cs_5_10_100.index, df_cs_5_10_100.values, label='cqi sorting')
+    plt.plot(df_es_5_10_100.index, df_es_5_10_100.values, label='expectation sorting')
+    plt.plot(df_bf_5_10_100.index, df_bf_5_10_100.values, label='brute force')
+
     plt.legend()
-    plt.title('CoMP Quality - gNB: 5, UE: 100')
-    plt.xlabel('Max gNB Connection')
+    plt.title('CoMP Quality - BS: 5, UE: 10')
+    plt.xlabel('# of available users of a base station')
     plt.ylabel('CoMP Quality')
-    plt.savefig('comp_quality_es_5_10_100', dpi=300)
+    plt.savefig('comp_quality_5_10_100', dpi=300)
+    plt.show()
+
+
+def get_comp_quality_graph_cqi_quality_5_100_100():
+    na_arr_5_100_100 = [182.63720590988672, 189.92794196630945, 190.23559084705215, 190.23559084705215,
+                        190.23559084705215, 190.23559084705215, 190.23559084705215, 190.23559084705215,
+                        190.23559084705215]  # naive approach 5x100x100
+    df_na_5_100_100 = pd.DataFrame(na_arr_5_100_100,
+                                   index=[(x + 2) * 10 for x in range(9)],
+                                   columns=['CoMP Quality'])
+
+    cs_arr_5_100_100 = [189.83509278749054, 190.49936835253027, 190.5004912179543, 190.5004912179543, 190.5004912179543,
+                        190.5004912179543, 190.5004912179543, 190.5004912179543,
+                        190.5004912179543]  # cqi sorting 5x100x100
+    df_cs_5_100_100 = pd.DataFrame(cs_arr_5_100_100,
+                                   index=[(x + 2) * 10 for x in range(9)],
+                                   columns=['CoMP Quality'])
+
+    es_arr_5_100_100 = [189.57197593968166, 190.23264797312356, 190.23559084705215, 190.23559084705215,
+                        190.23559084705215, 190.23559084705215, 190.23559084705215, 190.23559084705215,
+                        190.23559084705215]  # expectation sorting 5x100x100
+    df_es_5_100_100 = pd.DataFrame(es_arr_5_100_100,
+                                   index=[(x + 2) * 10 for x in range(9)],
+                                   columns=['CoMP Quality'])
+
+    # plt.xlim([1, 11])
+
+    plt.ylim([182, 191])
+    plt.xticks([(x + 2) * 10 for x in range(9)])
+    plt.plot(df_na_5_100_100.index, df_na_5_100_100.values, label='naive approach')
+    plt.plot(df_cs_5_100_100.index, df_cs_5_100_100.values, label='cqi sorting')
+    plt.plot(df_es_5_100_100.index, df_es_5_100_100.values, label='expectation sorting')
+
+    plt.legend()
+    plt.title('CoMP Quality - BS: 5, UE: 100')
+    plt.xlabel('# of available users of a base station')
+    plt.ylabel('CoMP Quality')
+    plt.savefig('comp_quality_5_100_100', dpi=300)
     plt.show()
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    # get_comp_quality_graph_cqi_quality_5_10_100()
+    get_comp_quality_graph_cqi_quality_5_100_100()
+
+    sys.exit()
+
     for i in range(9):
         get_graph_of_cqi_connection_probability('cqi_connection_probability', i + 2)
 
     sys.exit()
 
-    get_comp_quality_graph_cqi_quality()
 
